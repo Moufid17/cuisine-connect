@@ -8,7 +8,7 @@ up:
 stop:
 	docker compose down -v
 
-start: install
+start:
 	docker compose exec nodejs-server npm run dev
 
 bash:
