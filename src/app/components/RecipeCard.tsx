@@ -27,11 +27,11 @@ export default function RecipeCard({data, favorites}) {
   // const nameUrl = name.replace(/ /g, "-").toLowerCase();
 
   const handleLikeClick = () => {
-    setIsFavorite(prev => !prev)
     if (!session || !session.user){
       signIn()
       return
     } 
+    setIsFavorite(prev => !prev)
     updateFavorites(data.id)
     // getFavorites()
   }
