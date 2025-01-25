@@ -17,6 +17,10 @@ import useFavoriteStore from "../../../store/favoriteStore";
 import { Rating, Recipe } from "@prisma/client";
 import Link from "next/link";
 
+const capitalizeFirstLetter = (val: string) => {
+  return String(val).charAt(0).toUpperCase() + String(val).slice(1);
+}
+
 // export default function RecipeCard({ nom, description, temps }) {
 export default function RecipeCard({data, favorites}) {
   const { id, title, time } = data
@@ -57,7 +61,7 @@ export default function RecipeCard({data, favorites}) {
       <CardContent orientation="horizontal">
         <CardContent>
           <Link href={`/recipes/${ title }`} >
-            <Typography level="title-md">{title}</Typography>
+            <Typography level="title-md">{capitalizeFirstLetter(title)}</Typography>
           </Link>
         </CardContent>
         <IconButton
