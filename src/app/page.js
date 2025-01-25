@@ -13,10 +13,11 @@ import {
   CircularProgress,
 } from "@mui/joy";
 import { z } from "zod";
-import { signIn, useSession } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import RecipeCard from "./components/RecipeCard";
 import useRecipeStore from "../../store/recipeStore";
 import useFavoriteStore from "../../store/favoriteStore";
+import { filterRecipes } from "./utils/recipeUtils";
 
 const schema = z.object({
   message: z.object({
@@ -32,78 +33,43 @@ const schemaRating = z.object({
 const recipeInfoSchema = z.object({
   id: z.string(),
   title: z.string(),
-  // description: z.string(),
   time: z.string(),
   ratings: z.array(schemaRating),
 });
 
 const recipeSchema = z.array(recipeInfoSchema);
 
-const searchRoute = "/api/search";
-
 export default function Home() {
   const {data: session} = useSession()
   const [search, setSearch] = React.useState("");
   const [loading, setLoading] = React.useState(true);
+  const [initialRecipes, setInitialRecipes] = React.useState([]);
   const [filteredRecipes, setFilteredRecipes] = React.useState([]);
-  // const { recipes, getRecipes } = useRecipeStore((state) => state)
+  const { recipes, getRecipes } = useRecipeStore((state) => state)
   const { items, getFavorites } = useFavoriteStore((state) => state)
 
-  const updateSearch = React.useCallback((event) => {
-    setSearch(event.target.value);
-  }, []);
+  const updateSearch = (event) => { setSearch(event.target.value);  };
 
-  const getSearchResults = React.useCallback(
-    (event) => {
-      event.preventDefault();
-      if (!session || !session.user) {
-        signIn()
-      } else {
-        setLoading(true);
-        setFilteredRecipes([]);
-        setSearch("");
-        fetch(searchRoute, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            search,
-          }),
-        })
-          .then((response) => {
-            return response.json();
-          })
-          .then((json) => {
-            return schema.safeParse(json);
-          })
-          .then((data) => {
-            return JSON.parse(data.data.message.content);
-          })
-          .then((data) => {
-            return recipeSchema.safeParse(data);
-          })
-          .then((newRecipes) => {
-            console.log('datas => ', newRecipes);
-            setFilteredRecipes(newRecipes.data ?? []);
-          })
-          .catch((error) => {
-            console.error(error);
-          })
-          .finally(() => {
-            setLoading(false);
-          });
-      }
-    },
-    [search]
-  );
+  const onSubmitfilterRecipes = React.useCallback((event) => {
+    event.preventDefault();
+    if (search.length > 0){
+      setFilteredRecipes(filterRecipes(initialRecipes, search))
+    } else {
+      setFilteredRecipes(initialRecipes)
+    }
+  })
 
   React.useEffect(() => {
-    // Fetch Recipes
-    // getRecipes()
+    getRecipes()
     setLoading(false)
-    console.log("filteredRecipes => ", filteredRecipes);
   }, [])
+
+  React.useEffect(() => {
+    if (recipes && recipes.length > 0){
+      setFilteredRecipes(initialRecipes)
+      setInitialRecipes(recipes)
+    }
+  }, [recipes])
 
   React.useEffect(() => {
     if (session && session.user){
@@ -114,12 +80,12 @@ export default function Home() {
 
   return ( 
     <Box sx={{ gap: 2, m: 2, bgcolor: "white" }} justifyContent="space-between">
-      <Stack component="form" spacing={1} onSubmit={getSearchResults}>
+      <Stack component="form" spacing={1} onSubmit={onSubmitfilterRecipes}>
         <Input
           label="Recherche"
           placeholder="Une recette à base du poisson colin..."
           autoFocus
-          required
+          // required
           value={search}
           onChange={updateSearch}
         />
