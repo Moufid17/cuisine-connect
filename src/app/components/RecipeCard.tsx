@@ -54,33 +54,19 @@ export default function RecipeCard({data, favorites}) {
   
   return (
     <Card variant="outlined" sx={{ width: 390 }}>
-      <CardOverflow>
+      <CardContent orientation="horizontal">
+        <CardContent>
+          <Link href={`/recipes/${ title }`} >
+            <Typography level="title-md">{title}</Typography>
+          </Link>
+        </CardContent>
         <IconButton
           onClick={handleLikeClick} // Action pour incrémenter et decrément le rating
           aria-label="Like minimal photography"
-          // size="md"
           variant="plain"
-          sx={{
-            position: "absolute",
-            zIndex: 2,
-            borderRadius: "-50%",
-            padding: 0,
-            margin:0,
-            right: "1rem",
-            bottom: -20,
-            transform: "translateY(50%)",
-            // "&:hover": {
-            //   color: "red"
-            // }
-          }}
         >
           <Heart color={ isFavorite ? "red" : 'grey'} />
         </IconButton>
-      </CardOverflow>
-      <CardContent>
-        <Link href={`/recipes/${ title }`} >
-          <Typography level="title-md">{title}</Typography>
-        </Link>
       </CardContent>
       <CardOverflow variant="soft">
         <Divider inset="context" />
