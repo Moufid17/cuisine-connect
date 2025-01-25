@@ -75,8 +75,6 @@ async function main() {
       keywords: [
         "thon",
         "sans gluten",
-        "facile",
-        "6 parts",
       ],
     },
   });
@@ -112,8 +110,6 @@ async function main() {
       keywords: [
         "thon",
         "sans lactose",
-        "intermédiare",
-        "8 parts",
         "tarte",
         "tomate",
       ],
@@ -157,8 +153,6 @@ async function main() {
         "poulet",
         "sans lactose",
         "sans gluten",
-        "intermédiare",
-        "4 parts",
       ],
     },
   });
@@ -202,8 +196,6 @@ async function main() {
         "parmsean",
         "sans lactose",
         "sans gluten",
-        "facile",
-        "2 parts",
         "tomate cerise",
       ],
     },
@@ -243,8 +235,6 @@ async function main() {
       keywords: [
         "fraise",
         "végétarien",
-        "facile",
-        "6 parts",
         "menthe",
       ],
     },
@@ -285,9 +275,6 @@ async function main() {
         "salade",
         "fruits",
         "salade de fruits",
-        "facile",
-        "3 parts",
-        "végétarien",
         "végétalien",
         "sans gluten",
         "sans lactose",
@@ -325,8 +312,6 @@ async function main() {
         "banane",
         "smoothie",
         "frais",
-        "rapide",
-        "facile",
       ],
     },
   });
@@ -366,8 +351,6 @@ async function main() {
         "salade",
         "concombre",
         "salade de concombre",
-        "rapide",
-        "facile",
         "végétarien",
         "sans gluten",
       ],
