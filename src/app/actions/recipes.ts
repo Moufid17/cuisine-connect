@@ -1,8 +1,9 @@
 'use server'
-import {prisma} from "../lib/authOptions"
+
+import { prismaClientDB } from "../lib/prismaClient";
 
 export async function findRecipeById(id: string) {
-    return await prisma.recipe.findUnique({
+    return await prismaClientDB.recipe.findUnique({
         where: {
           id: id,
         },
@@ -10,7 +11,7 @@ export async function findRecipeById(id: string) {
 }
 
 export async function findRecipes() {
-  return await prisma.recipe.findMany({
+  return await prismaClientDB.recipe.findMany({
     // select: {
     //   title: true
     // },
@@ -19,11 +20,11 @@ export async function findRecipes() {
 }
 
 export async function findAllRecipes() {
-    return await prisma.recipe.findMany();
+    return await prismaClientDB.recipe.findMany();
 }
 
 export async function findAllRecipesForRequest() {
-    return await prisma.recipe.findMany({
+    return await prismaClientDB.recipe.findMany({
         select: {
             id: true,
             title: true,
@@ -44,7 +45,7 @@ export async function findAllRecipesForRequest() {
 }
 
 export async function findByTitle(title: string) {
-    return await prisma.recipe.findUnique({
+    return await prismaClientDB.recipe.findUnique({
         where: {
             title: title
         }

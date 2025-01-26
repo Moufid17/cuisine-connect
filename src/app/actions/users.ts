@@ -1,14 +1,15 @@
 'use server'
 
 import { getServerSession } from "next-auth/next"
-import authOptions, {prisma} from "../lib/authOptions"
+import authOptions from "../lib/authOptions"
 import { NextApiRequest, NextApiResponse } from "next";
 import { Rating } from "@prisma/client";
+import { prismaClientDB } from "../lib/prismaClient";
 
 export async function currentUser() {
   const session = await getServerSession(authOptions);
   if (!session || !session.user) return null
-  return await prisma.user.findUnique({
+  return await prismaClientDB.user.findUnique({
       where: {
         email: session.user.email,
       },
@@ -17,7 +18,7 @@ export async function currentUser() {
 }
 
 export async function findUserByEmail(email: string) {
-  return await prisma.user.findUnique({
+  return await prismaClientDB.user.findUnique({
       where: {
         email: email,
       },
@@ -26,7 +27,7 @@ export async function findUserByEmail(email: string) {
 
 export async function findUserFavoriteRecipes() {
   const user = await currentUser();
-  return await prisma.rating.findMany({
+  return await prismaClientDB.rating.findMany({
       where: {
         userId: user.id
       }
@@ -37,7 +38,7 @@ export async function updateRecipeToFavorite(recipeId: string, isNewRating) {
   const user = await currentUser()
 
   if (isNewRating) {
-    const userUpdated = await prisma.user.update({
+    const userUpdated = await prismaClientDB.user.update({
       where: { id: user.id },
       data: {
         ratings: {
@@ -54,20 +55,7 @@ export async function updateRecipeToFavorite(recipeId: string, isNewRating) {
   } else {
     const ratingUpdate: Rating = user.ratings.find((rating: Rating) => rating.recipeId == recipeId)
     
-    // const updateUser = await prisma.user.update({
-    //   where: {
-    //     id: user.id,
-    //   },
-    //   data: {
-    //     ratings: {
-    //       update: {
-    //         where: {id: ratingUpdate.id },
-    //         data: {}
-    //       }
-    //     },
-    //   },
-    // })
-    return await prisma.rating.delete({
+    return await prismaClientDB.rating.delete({
       where: { id: ratingUpdate.id }, // Remplacez ratingId par l'ID du rating à supprimer
     });
   }

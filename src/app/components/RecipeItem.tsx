@@ -2,15 +2,12 @@
 import * as React from "react";
 import {
   IconButton,
-  AspectRatio,
   Typography,
   Divider,
   Card,
   CardContent,
   CardOverflow,
   Link,
-  CardActions,
-  Button,
 } from "@mui/joy";
 import { Heart } from "react-feather";
 
@@ -50,8 +47,6 @@ export default function RecipeCard({ nom, description, temps }) {
       <CardOverflow variant="soft">
         <Divider inset="context" />
         <CardContent orientation="horizontal">
-          {/* <Typography level="body-xs">6.3k views</Typography>
-          <Divider orientation="vertical" /> */}
           <Typography level="body-xs">{temps}</Typography>
         </CardContent>
       </CardOverflow>
