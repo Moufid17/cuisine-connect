@@ -1,79 +1,65 @@
-"use client";
+'use client'
 import * as React from "react";
+import { useSession } from 'next-auth/react';
 import {
   Box,
   Sheet,
   Grid,
   Typography,
-  FormControl,
-  FormLabel,
   Input,
   Stack,
   Button,
   CircularProgress,
 } from "@mui/joy";
-import { z } from "zod";
-import { useSession } from 'next-auth/react';
+
 import RecipeCard from "./components/RecipeCard";
 import useRecipeStore from "../../store/recipeStore";
 import useFavoriteStore from "../../store/favoriteStore";
 import { filterRecipes } from "./utils/recipeUtils";
 
-const schema = z.object({
-  message: z.object({
-    role: z.string(),
-    content: z.string(),
-  }),
-});
-
-const schemaRating = z.object({
-    value: z.number(),
-});
-
-const recipeInfoSchema = z.object({
-  id: z.string(),
-  title: z.string(),
-  time: z.string(),
-  ratings: z.array(schemaRating),
-});
-
-const recipeSchema = z.array(recipeInfoSchema);
 
 export default function Home() {
   const {data: session} = useSession()
   const [search, setSearch] = React.useState("");
-  const [loading, setLoading] = React.useState(true);
-  const [initialRecipes, setInitialRecipes] = React.useState([]);
-  const [filteredRecipes, setFilteredRecipes] = React.useState([]);
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [datas, setDatas] = React.useState( {
+    initials: [],
+    filtered: [],
+  });
   const { recipes, getRecipes } = useRecipeStore((state) => state)
   const { items, getFavorites } = useFavoriteStore((state) => state)
 
-  const updateSearch = (event) => { setSearch(event.target.value);  };
+
+  const updateSearch = React.useCallback((event) => {
+    setSearch(event.target.value);
+  }, []);
 
   const onSubmitfilterRecipes = React.useCallback((event) => {
     event.preventDefault();
-    if (search.length > 0){
-      setFilteredRecipes(filterRecipes(initialRecipes, search))
-    } else {
-      setFilteredRecipes(initialRecipes)
-    }
-  })
+    setDatas(prev => ({
+      ...prev,
+      filtered: (search.length > 0) ? filterRecipes(prev.initials, search) : prev.initials
+    }))
+    setIsLoading(false)
+  }, [search])
+
 
   React.useEffect(() => {
-    getRecipes()
-    setLoading(false)
+    if (recipes.length <= 0) {      
+      getRecipes();
+    }
+    setIsLoading(false)
   }, [])
 
   React.useEffect(() => {
     if (recipes && recipes.length > 0){
-      setFilteredRecipes(initialRecipes)
-      setInitialRecipes(recipes)
+      setDatas({initials: recipes, filtered: recipes})
+      setIsLoading(false)
     }
   }, [recipes])
 
   React.useEffect(() => {
     if (session && session.user){
-      // Fetch favorites and Rating
       getFavorites()
     }
   }, [session?.user])
@@ -85,7 +71,6 @@ export default function Home() {
           label="Recherche"
           placeholder="Une recette à base du poisson colin..."
           autoFocus
-          // required
           value={search}
           onChange={updateSearch}
         />
@@ -98,28 +83,18 @@ export default function Home() {
           {" "}
           Les Recettes
         </Typography>
-        {loading == true && (filteredRecipes.length == 0) ? (
-          <Box><Typography textAlign="center"><CircularProgress color="neutral"/></Typography></Box>
-        ) : ( !loading && filteredRecipes.length > 0 ?
-          (
-            <Grid
-              container
-              gap={2}
-              sx={{ flexGrow: 1 }}
-              justifyContent="space-around"
-            >
-              {filteredRecipes.map((recipe, index) => (
-                <Grid key={index}>
-                  <RecipeCard data={recipe} favorites={items} />       
-                </Grid>
-              ))}
-            </Grid>
-          ) : (
+        {!isLoading && datas.filtered.length >= 0  ? (
+          <Grid container spacing={2} sx={{ flexGrow: 1 , gap: 2, justifyContent: "space-between"}}>
+            {datas.filtered.map((recipe) => (
+              <RecipeCard key={recipe.id} data={recipe} favorites={items} />
+            ))}
+          </Grid>
+        ) : (
             <Box>
-              <Typography textAlign="center">No recipes to display</Typography>
+              <Typography textAlign="center">Aucune recette trouvée</Typography>
             </Box>
           )
-        )}
+        }
       </Box>
     </Box>
   );
