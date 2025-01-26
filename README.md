@@ -7,7 +7,7 @@
     - Un utilisateur connecté pourra ajouter ses allergies et noté
     
 # Requirement :
-- Create and fill : `.env` & `cuisine-connect/.env` & `cuisine-connect/.env.local`
+- Create and fill : `.env`
     > Check Makefile for more
 
 # Lancement projet
