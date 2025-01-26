@@ -19,6 +19,9 @@ bash:
 dpm:
 	docker compose exec nodejs npx prisma migrate dev
 
+generate: dpm
+	docker compose exec nodejs npx prisma generate
+
 seed:
 	docker compose exec nodejs npx prisma db push --force-reset
 	docker compose exec nodejs npx prisma db seed
