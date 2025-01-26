@@ -15,7 +15,7 @@
 ```bash
 make up
 make install
-make dpm
+make generate
 make seed
 make dev
 ```
